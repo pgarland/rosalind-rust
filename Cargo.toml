@@ -1,0 +1,5 @@
+[package]
+
+name = "rosalind-rust"
+version = "0.0.1"
+authors = ["Phillip Garland <pgarland@gmail.com>"]
