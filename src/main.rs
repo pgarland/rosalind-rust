@@ -23,7 +23,7 @@ fn main () {
 
         "iprb" => {
             if args.len() != 5 {
-                fail!("Usage: rosalind iprb DOMINANT HET RECESSIVE");
+                panic!("Usage: rosalind iprb DOMINANT HET RECESSIVE");
             }
             let homo_d = from_str(args[2].as_slice()).unwrap();
             let het = from_str(args[3].as_slice()).unwrap();
@@ -48,7 +48,7 @@ fn main () {
             let codon_table = build_codon_table(codon_file);
             println!("{}", prot(rna.as_slice(), codon_table));
         }
-        _ => { fail!("{} is not a valid problem.", problem) },
+        _ => { panic!("{} is not a valid problem.", problem) },
     }
 }
 
@@ -58,7 +58,7 @@ fn read_nuc_file(fname: &str) -> String {
 
     match nuc_result {
         Ok(nucs) => {return nucs},
-        Err(e) => fail!("Opening and reading failed: {}", e),
+        Err(e) => panic!("Opening and reading failed: {}", e),
     }
 
 }
@@ -88,7 +88,7 @@ fn count_nucs(nucs: &str) -> NucCount {
             'C' => {nuc_count.c += 1}
             'G' => {nuc_count.g += 1}
             'T' => {nuc_count.t += 1}
-            nuc @ _ => fail!("Unhandled nucleotide!: {}", nuc)
+            nuc @ _ => panic!("Unhandled nucleotide!: {}", nuc)
         }
     }
 
@@ -113,7 +113,7 @@ fn transcribe (dna: &str) -> String {
             'C' => {rna.push_str("C")}
             'G' => {rna.push_str("G")}
             'T' => {rna.push_str("U")}
-            nuc @ _ => fail!("Unhandled nucleotide!: {}", nuc)
+            nuc @ _ => panic!("Unhandled nucleotide!: {}", nuc)
         }
     }
 
@@ -130,7 +130,7 @@ fn complement (dna: &str) -> String {
             'C' => {rna.push_str("G")}
             'G' => {rna.push_str("C")}
             'T' => {rna.push_str("A")}
-            nuc @ _ => fail!("Unhandled nucleotide!: {}", nuc)
+            nuc @ _ => panic!("Unhandled nucleotide!: {}", nuc)
         }
     }
 
@@ -155,7 +155,7 @@ fn revcomp(dna: &str) -> String {
             'C' => {cdna.push_str("G")}
             'G' => {cdna.push_str("C")}
             'T' => {cdna.push_str("A")}
-            base @ _ => fail!("Unhandled nucleotide!: {}", base)
+            base @ _ => panic!("Unhandled nucleotide!: {}", base)
         }
     }
 
@@ -225,7 +225,7 @@ fn read_fasta(fname: &str) -> HashMap<String, String> {
     for line in file.lines() {
         let l = line.clone().unwrap();
         if !is_id_line(l.as_slice()) {
-            if id.as_slice() == "" { fail!("Invalid FASTA file: sequence does not have id") }
+            if id.as_slice() == "" { panic!("Invalid FASTA file: sequence does not have id") }
             else {seq.push_str(l.as_slice().trim()) }
         }
 
@@ -251,7 +251,7 @@ fn is_id_line(line: &str) -> bool {
 
     
 fn extract_id(line: &str) -> String {
-    if !is_id_line(line) {fail!("{} is not a valid FASTA id line", line)}
+    if !is_id_line(line) {panic!("{} is not a valid FASTA id line", line)}
 
     line.trim_left_chars('>').to_string()
 }
