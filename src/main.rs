@@ -316,7 +316,7 @@ fn build_codon_table(fname: &str) -> HashMap<String, String> {
 fn translate <'a> (rna: &'a str, codon_table: HashMap<String, String>) -> String {
     let mut peptide = String::new();
 
-    let mut it = range(0, rna.len()).filter(|idx| idx % 3 == 0);
+    let mut it = range(0, rna.len()).filter(|idx| *idx % 3 == 0);
     for idx in it {
 
         let codon = rna.slice(idx, idx + 3).to_string();
