@@ -321,7 +321,7 @@ fn translate <'a> (rna: &'a str, codon_table: HashMap<String, String>) -> String
 
         let codon = rna.slice(idx, idx + 3).to_string();
 
-        let aa = codon_table.find(&codon).unwrap();
+        let aa = codon_table.get(&codon).unwrap();
         if aa.as_slice() == "(Stop)" {
             return peptide
         }
