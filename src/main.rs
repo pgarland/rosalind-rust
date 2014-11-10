@@ -58,6 +58,13 @@ fn main () {
                 None => print!("{}", "No matches found"),
             }
         }
+
+        "hamming" => {
+            let s = args[2].as_slice();
+            let t = args[3].as_slice();
+            let distance = hamming(s,t);
+            println!("{}", distance);
+        }
         _ => { panic!("{} is not a valid problem.", problem) },
     }
 }
@@ -387,3 +394,24 @@ fn subs_test() {
     let probe = "ATAT";
     assert_eq!(subs(genome, probe).unwrap(), vec![2, 4, 10]);
 }
+
+
+fn hamming(s: &str, t: &str) -> uint {
+    let mut distance = 0u;
+
+    let mut it = s.chars().zip(t.chars());
+    for (x, y) in it {
+        if x != y { distance += 1 }
+    }
+    distance
+}
+
+
+#[test]
+fn hamming_test() {
+    let s = "GAGCCTACTAACGGGAT";
+    let t = "CATCGTAATGACGGCCT";
+
+    assert_eq!(7, hamming(s,t));
+}
+
