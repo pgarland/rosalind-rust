@@ -10,6 +10,7 @@ use std::collections::HashMap;
 #[test]
 use std::num::abs;
 
+
 fn main () {
     let args = os::args();   
     
@@ -69,6 +70,7 @@ fn main () {
     }
 }
 
+
 fn read_nuc_file(fname: &str) -> String {
     let path = Path::new(fname);
     let nuc_result = File::open(&path).read_to_string();
@@ -80,6 +82,7 @@ fn read_nuc_file(fname: &str) -> String {
 
 }
 
+
 fn dna(fname: &str) -> () {
     let nucs = read_nuc_file(fname);
     let nuc_count = count_nucs(nucs.as_slice());
@@ -89,6 +92,7 @@ fn dna(fname: &str) -> () {
     };
 }
 
+
 struct NucCount {
     a: u32,
     c: u32,
@@ -96,6 +100,9 @@ struct NucCount {
     t: u32,
 }
 
+
+// Return a struct containing the number of occurances of each
+// nucleotide in the nucs string.
 fn count_nucs(nucs: &str) -> NucCount {
     let mut nuc_count = NucCount { a: 0, t: 0, c: 0, g: 0 };
             
@@ -112,6 +119,7 @@ fn count_nucs(nucs: &str) -> NucCount {
     return nuc_count;
 }
 
+
 fn rna(fname: &str) -> () {
     let dna = read_nuc_file(fname);
     let rna = transcribe(dna.as_slice());
@@ -120,11 +128,13 @@ fn rna(fname: &str) -> () {
 }
 
 
-// FIXME: learn a way to factor out the common functionality in transcribe/complement/revcomp
+// Given a DNA string, return the expected RNA string when the DNA
+// sequence is transcribed in a cell.
 fn transcribe (dna: &str) -> String {
     let mut rna = String::new();
     
     for nuc in dna.chars() {
+        // FIXME: learn a way to factor out the common functionality in transcribe/complement/revcomp
         match nuc  {
             'A' => {rna.push_str("A")}
             'C' => {rna.push_str("C")}
@@ -138,29 +148,8 @@ fn transcribe (dna: &str) -> String {
 }
 
 
-fn complement (dna: &str) -> String {
-    let mut rna = String::new();
-    
-    for nuc in dna.chars() {
-        match nuc  {
-            'A' => {rna.push_str("T")}
-            'C' => {rna.push_str("G")}
-            'G' => {rna.push_str("C")}
-            'T' => {rna.push_str("A")}
-            nuc @ _ => panic!("Unhandled nucleotide!: {}", nuc)
-        }
-    }
-
-    rna
-}
-
-
-fn revc(dna: &str) -> () {
-    let cdna = revcomp(dna);
-    println!("{}", cdna);
-}
-
-
+// Given a DNA sequence, return the sequence on the opposite DNA
+// strand
 fn revcomp(dna: &str) -> String {
     let it = dna.chars();
 
@@ -180,9 +169,9 @@ fn revcomp(dna: &str) -> String {
 }
 
 
-fn do_iprb(homo_d: uint, het: uint, homo_r: uint) -> () {
-    let prob = iprb(homo_d, het, homo_r);
-    println!("{}", prob);
+fn revc(dna: &str) -> () {
+    let cdna = revcomp(dna);
+    println!("{}", cdna);
 }
 
 
@@ -211,6 +200,12 @@ fn iprb(homo_d: uint, het: uint, homo_r: uint) -> f32 {
 }
 
 
+fn do_iprb(homo_d: uint, het: uint, homo_r: uint) -> () {
+    let prob = iprb(homo_d, het, homo_r);
+    println!("{}", prob);
+}
+
+
 #[test]
 fn irpb_test() {
     let prob = iprb(2, 2, 2);
@@ -231,7 +226,8 @@ fn fib_test() {
     assert!(rabbits == 19);
 }
 
-
+// Read in a FASTA file and return a hashmap where each key is an id
+// and each corresponding value is the molecular sequence for that id
 fn read_fasta(fname: &str) -> HashMap<String, String> {
     let path = Path::new(fname);
     let mut file = BufferedReader::new(File::open(&path));
@@ -274,6 +270,8 @@ fn extract_id(line: &str) -> String {
 }
 
 
+// Given a DNA string, return the percentage of bases that are either
+// guanine or cytosine
 fn gc_content(dna: &str) -> f32 {
     let nuc_counts = count_nucs(dna);
     let len = dna.len() as f32;
@@ -314,6 +312,9 @@ fn gc_test() {
 }
 
 
+// Given a file where each line is mapping between RNA codons and
+// amino acids, return a hash map where each key is an RNA codon and
+// each value is the corresponding amino acid
 fn build_codon_table(fname: &str) -> HashMap<String, String> {
     let path = Path::new(fname);
     let mut file = BufferedReader::new(File::open(&path));
@@ -330,6 +331,8 @@ fn build_codon_table(fname: &str) -> HashMap<String, String> {
 }
 
 
+// Given an RNA sequence and a codon table return the peptide expected
+// when the RNA is translated.
 fn translate <'a> (rna: &'a str, codon_table: HashMap<String, String>) -> String {
     let mut peptide = String::new();
 
@@ -350,19 +353,20 @@ fn translate <'a> (rna: &'a str, codon_table: HashMap<String, String>) -> String
 }
 
 
+fn prot(rna: &str, codon_table: HashMap<String, String>) -> String {
+    translate(rna, codon_table)
+}
+
+
 #[test]
 fn prot_test() {
     let rna = read_nuc_file("data/prot.fasta");
     let codon_table = build_codon_table("data/aa.txt");
     assert!(prot(rna.as_slice(), codon_table).as_slice() == "MAMAPRTEINSTRING");
 }
-    
-
-fn prot(rna: &str, codon_table: HashMap<String, String>) -> String {
-    translate(rna, codon_table)
-}
 
 
+// Return a hashmap of all substrings of genome of length kmer_len
 fn hash_genome(genome: &str, kmer_len: uint) -> HashMap<String, Vec<uint>> {
 
     let mut genome_hash : HashMap<String, Vec<uint>> = HashMap::new();
@@ -381,6 +385,7 @@ fn hash_genome(genome: &str, kmer_len: uint) -> HashMap<String, Vec<uint>> {
 }
 
 
+// Return the starting position for all matches of probe in genome
 fn subs(genome: &str, probe: &str) -> Option<Vec<uint>> {
     let gh = hash_genome(genome, probe.len());
 
@@ -396,9 +401,12 @@ fn subs_test() {
 }
 
 
+// return the number of positions at which the corresponding
+// chararcters in s and t differ
 fn hamming(s: &str, t: &str) -> uint {
     let mut distance = 0u;
 
+    // iterate over both strings simultaneously
     let mut it = s.chars().zip(t.chars());
     for (x, y) in it {
         if x != y { distance += 1 }
