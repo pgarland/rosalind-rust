@@ -48,6 +48,16 @@ fn main () {
             let codon_table = build_codon_table(codon_file);
             println!("{}", prot(rna.as_slice(), codon_table));
         }
+
+        "subs" => {
+            let genome = args[2].as_slice();
+            let probe = args[3].as_slice();
+            let positions = subs(genome, probe);
+            match positions {
+                Some(pos_list) => print!("{}", pos_list),
+                None => print!("{}", "No matches found"),
+            }
+        }
         _ => { panic!("{} is not a valid problem.", problem) },
     }
 }
@@ -343,4 +353,37 @@ fn prot_test() {
 
 fn prot(rna: &str, codon_table: HashMap<String, String>) -> String {
     translate(rna, codon_table)
+}
+
+
+fn hash_genome(genome: &str, kmer_len: uint) -> HashMap<String, Vec<uint>> {
+
+    let mut genome_hash : HashMap<String, Vec<uint>> = HashMap::new();
+
+    for pos in range(0, genome.len() - kmer_len) {
+        let kmer = genome.slice(pos, pos + kmer_len).to_string();
+  
+        if !genome_hash.contains_key(&kmer) {
+            genome_hash.insert(kmer, vec![pos + 1]);
+        } else {
+            let positions = genome_hash.get_mut(&kmer).unwrap();
+            (*positions).push(pos + 1);
+        }
+    }
+    genome_hash
+}
+
+
+fn subs(genome: &str, probe: &str) -> Option<Vec<uint>> {
+    let gh = hash_genome(genome, probe.len());
+
+    gh.find_copy(&probe.to_string())
+}
+
+
+#[test]
+fn subs_test() {
+    let genome = "GATATATGCATATACTT";
+    let probe = "ATAT";
+    assert_eq!(subs(genome, probe).unwrap(), vec![2, 4, 10]);
 }
