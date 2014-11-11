@@ -60,10 +60,10 @@ fn main () {
             }
         }
 
-        "hamming" => {
+        "hamm" => {
             let s = args[2].as_slice();
             let t = args[3].as_slice();
-            let distance = hamming(s,t);
+            let distance = hamming_distance(s,t);
             println!("{}", distance);
         }
         _ => { panic!("{} is not a valid problem.", problem) },
@@ -403,7 +403,7 @@ fn subs_test() {
 
 // return the number of positions at which the corresponding
 // chararcters in s and t differ
-fn hamming(s: &str, t: &str) -> uint {
+fn hamming_distance(s: &str, t: &str) -> uint {
     let mut distance = 0u;
 
     // iterate over both strings simultaneously
