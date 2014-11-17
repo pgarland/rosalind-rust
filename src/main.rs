@@ -8,7 +8,7 @@ use std::io::BufferedReader;
 use std::collections::HashMap;
 
 #[test]
-use std::num::abs;
+use std::num::FloatMath;
 
 
 fn main () {
@@ -210,7 +210,7 @@ fn do_iprb(homo_d: uint, het: uint, homo_r: uint) -> () {
 fn irpb_test() {
     let prob = iprb(2, 2, 2);
     let epsilon: f32 = 5e-6;
-    assert!( abs(prob - 0.78333) < epsilon);
+    assert!( FloatMath::abs_sub(prob, 0.78333) < epsilon);
 }
 
 
@@ -308,7 +308,7 @@ fn gc_test() {
 
     let (id, gc) = gc(test_file);
     assert!(id.as_slice() == "Rosalind_0808");
-    assert!( abs(gc - 60.919540) < epsilon);
+    assert!( FloatMath::abs_sub(gc, 60.919540) < epsilon);
 }
 
 
@@ -420,6 +420,6 @@ fn hamming_test() {
     let s = "GAGCCTACTAACGGGAT";
     let t = "CATCGTAATGACGGCCT";
 
-    assert_eq!(7, hamming(s,t));
+    assert_eq!(7, hamming_distance(s,t));
 }
 
