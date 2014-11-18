@@ -423,3 +423,33 @@ fn hamming_test() {
     assert_eq!(7, hamming_distance(s,t));
 }
 
+
+
+// Given the number of couples with each genotype, and assuming each couple has 2 children, return the expected number of offspring with a dominant genotype
+
+// od_od = number of couples where both partners have the hOmozygous Dominant genotype
+// od_e = number of couples where one partner has the hOmozygous Dominant genotype and the other is hEterozygous
+// od_or = number of couples where one partner has the hOmozygous Dominant genotype and the other is hOmozygous Recessive
+// e_e = number of couples where both partners are hEterozygous
+// e_or = number of couples where one partner has the hEterzozygous genotype and the other is hOmozygous Recessive
+// or_or = number of couples where both partners have the hOmozygous Recessive genotype
+fn iev(od_od: u16, od_e: u16, od_or: u16, e_e: u16, e_or: u16, or_or: u16) -> f32 {
+    
+    // probability of each couple having an offspring with the dominant phenotype * number of offspring per couple * number of couples
+    let od_od_kids = 1.0 * 2.0 * (od_od as f32);
+    let od_e_kids = 1.0 * 2.0 * (od_e as f32);
+    let od_or_kids = 1.0 * 2.0 * (od_or as f32);
+    let e_e_kids = 0.75 * 2.0 * (e_e as f32);
+    let e_or_kids = 0.5 * 2.0 * (e_or as f32);
+    let or_or_kids = 0.0 * 2.0 * (or_or as f32);
+
+    od_od_kids + od_e_kids + od_or_kids + e_e_kids + e_or_kids + or_or_kids
+}
+
+#[test]
+fn iev_test() {
+    let epsilon = 1e-6;
+
+    let dominant_kids = iev(1, 0, 0, 1, 0, 1);  
+    assert!( FloatMath::abs_sub(dominant_kids, 3.5) < epsilon);
+}
